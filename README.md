@@ -1,0 +1,5 @@
+- Only decrypts pdf files created on the current date.
+- Reads a file named pdf-passwords.txt line by line for the list of passwords.
+- Removes passwords from and saves them in the same folder with unencrypted_ prepended.
+- Opens decrypted files.
+- That's it I guess.

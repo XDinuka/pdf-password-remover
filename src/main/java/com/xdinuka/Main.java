@@ -1,22 +1,18 @@
 package com.xdinuka;
 
-import com.xdinuka.service.PDFPathProviderServiceImpl;
-import com.xdinuka.service.PasswordsProviderServiceImpl;
-import com.xdinuka.util.PDFUtil;
-
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        Path currentPath = Paths.get("").toAbsolutePath();
 
-        List<String> allPasswords = new PasswordsProviderServiceImpl().getAllPasswords();
-        Map<String, String> pdfPathMap = new PDFPathProviderServiceImpl().getPDFPathMap();
-        pdfPathMap.forEach((key, value) -> {
-            Optional<File> file = PDFUtil.removePassword(key, value, allPasswords);
-            file.ifPresent(PDFUtil::openFile);
-        });
+        List<Path> filesCreatedTodayInPath = FileUtil.findPdfFilesCreatedTodayInPath(currentPath);
+        List<String> passwords = FileUtil.readPasswordsFile(currentPath.resolve("pdf-passwords.txt"));
+        filesCreatedTodayInPath.stream().map(file -> PDFUtil.removePassword(file, passwords)).filter(Optional::isPresent).map(Optional::get).forEach(FileUtil::openFile);
+
     }
 }
